@@ -132,7 +132,7 @@ public class PageRank {
                     double value = messageIterator.next();
                     sum += value;
                 }
-                double pr = sum * alpha + (1 - alpha);
+                double pr = sum;
                 this.context.setNewVertexValue(pr);
 
                 if (!outEdges.isEmpty()) {
