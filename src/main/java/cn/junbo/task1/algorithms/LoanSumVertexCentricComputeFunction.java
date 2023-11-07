@@ -19,8 +19,9 @@ public class LoanSumVertexCentricComputeFunction extends AbstractVcFunc<String, 
         } else if (this.context.getIterationId() == 2 && vertex.getValue().f0 == VertexType.ACCOUNT) {
             double loadSum = 0;
             while (messageIterator.hasNext() ) {
-                if (messageIterator.next().f0 == EdgeType.LOAN){
-                    double value = messageIterator.next().f1;
+                Tuple<EdgeType, Double> ms = messageIterator.next();
+                if (ms.f0 == EdgeType.LOAN){
+                    double value = ms.f1;
                     loadSum += value;
                 }
             }
@@ -31,8 +32,9 @@ public class LoanSumVertexCentricComputeFunction extends AbstractVcFunc<String, 
             int transfer = 0;
             double loadSum = 0;
             while (messageIterator.hasNext()) {
-                if (messageIterator.next().f0 == EdgeType.TRANSFER){
-                    double value = messageIterator.next().f1;
+                Tuple<EdgeType, Double> ms = messageIterator.next();
+                if (ms.f0 == EdgeType.TRANSFER){
+                    double value = ms.f1;
                     loadSum += value;
                     transfer++;
                 }
@@ -45,8 +47,9 @@ public class LoanSumVertexCentricComputeFunction extends AbstractVcFunc<String, 
         }else if (this.context.getIterationId() == 4 && vertex.getValue().f0 == VertexType.PERSON) {
             double loadSum = 0;
             while (messageIterator.hasNext()) {
-                if (messageIterator.next().f0 == EdgeType.TRANSFER){
-                    double value = messageIterator.next().f1;
+                Tuple<EdgeType, Double> ms = messageIterator.next();
+                if (ms.f0 == EdgeType.OWN){
+                    double value = ms.f1;
                     loadSum += value;
                 }
             }
