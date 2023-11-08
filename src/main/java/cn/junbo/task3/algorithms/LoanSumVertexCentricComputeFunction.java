@@ -1,7 +1,5 @@
-package cn.junbo.task1.algorithms;
+package cn.junbo.task3.algorithms;
 
-import cn.junbo.model.EdgeType;
-import cn.junbo.model.VertexType;
 import com.antgroup.geaflow.common.tuple.Tuple;
 import com.antgroup.geaflow.example.function.AbstractVcFunc;
 import com.antgroup.geaflow.model.graph.vertex.IVertex;

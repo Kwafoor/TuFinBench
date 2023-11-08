@@ -1,4 +1,4 @@
-package cn.junbo.task1.algorithms;
+package cn.junbo.model;
 
 public enum VertexType {
     PERSON,

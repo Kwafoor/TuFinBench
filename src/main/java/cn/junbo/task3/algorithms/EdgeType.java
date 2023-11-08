@@ -1,4 +1,4 @@
-package cn.junbo.task1.algorithms;
+package cn.junbo.task3.algorithms;
 
 public enum EdgeType {
     LOAN,

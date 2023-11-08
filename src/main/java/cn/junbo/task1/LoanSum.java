@@ -1,8 +1,8 @@
 package cn.junbo.task1;
 
-import cn.junbo.Result;
+import cn.junbo.model.Result;
 import cn.junbo.task1.algorithms.LoanSumAlgorithms;
-import cn.junbo.task1.algorithms.VertexType;
+import cn.junbo.model.VertexType;
 import cn.junbo.utils.SinkFunctionFactory;
 import com.antgroup.geaflow.api.function.io.SinkFunction;
 import com.antgroup.geaflow.api.graph.PGraphWindow;

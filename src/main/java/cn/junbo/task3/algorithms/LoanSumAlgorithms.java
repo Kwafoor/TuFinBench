@@ -1,7 +1,5 @@
-package cn.junbo.task1.algorithms;
+package cn.junbo.task3.algorithms;
 
-import cn.junbo.model.EdgeType;
-import cn.junbo.model.VertexType;
 import com.antgroup.geaflow.api.graph.compute.VertexCentricCompute;
 import com.antgroup.geaflow.api.graph.function.vc.VertexCentricCombineFunction;
 import com.antgroup.geaflow.api.graph.function.vc.VertexCentricComputeFunction;
