@@ -21,7 +21,7 @@ public class Result implements Comparable<Result> {
 
     @Override
     public String toString() {
-        return String.format("%s,%s", id, value);
+        return String.format("%s|%s", id, value);
     }
 
     @Override

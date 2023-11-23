@@ -3,6 +3,7 @@ package cn.junbo.task2;
 import cn.junbo.model.Result;
 import cn.junbo.task2.algorithms.LoopTransferAlgorithms;
 import cn.junbo.utils.SinkFunctionFactory;
+import cn.junbo.utils.SortFileSink;
 import com.antgroup.geaflow.api.function.io.SinkFunction;
 import com.antgroup.geaflow.api.graph.PGraphWindow;
 import com.antgroup.geaflow.api.pdata.stream.window.PWindowSource;
@@ -36,7 +37,7 @@ public class LoopTransfer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoopTransfer.class);
 
-    public static final String RESULT_FILE_PATH = "./target/tmp/data/result2";
+    public static final String RESULT_FILE_PATH = "./target/tmp/data/result/";
 
     public static void main(String[] args) {
         Environment environment = EnvironmentUtil.loadEnvironment(args);
@@ -49,7 +50,7 @@ public class LoopTransfer {
         Pipeline pipeline = PipelineFactory.buildPipeline(environment);
         Configuration envConfig = environment.getEnvironmentContext().getConfig();
         envConfig.put(FileSink.OUTPUT_DIR, RESULT_FILE_PATH);
-        ResultValidator.cleanResult(RESULT_FILE_PATH);
+        envConfig.put(SortFileSink.TASK_ID, "2");
 
         pipeline.submit((PipelineTask) pipelineTaskCxt -> {
             Configuration conf = pipelineTaskCxt.getConfig();

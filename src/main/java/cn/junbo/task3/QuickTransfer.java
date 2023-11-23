@@ -1,7 +1,9 @@
 package cn.junbo.task3;
 
+import cn.junbo.model.DoubleResult;
 import cn.junbo.model.Result;
 import cn.junbo.utils.SinkFunctionFactory;
+import cn.junbo.utils.SortFileSink;
 import com.antgroup.geaflow.api.function.io.SinkFunction;
 import com.antgroup.geaflow.api.graph.PGraphWindow;
 import com.antgroup.geaflow.api.graph.compute.VertexCentricCompute;
@@ -43,7 +45,7 @@ public class QuickTransfer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuickTransfer.class);
 
-    public static final String RESULT_FILE_PATH = "./target/tmp/data/result3";
+    public static final String RESULT_FILE_PATH = "./target/tmp/data/result/";
 
     public static void main(String[] args) {
         Environment environment = EnvironmentUtil.loadEnvironment(args);
@@ -56,7 +58,7 @@ public class QuickTransfer {
         Pipeline pipeline = PipelineFactory.buildPipeline(environment);
         Configuration envConfig = environment.getEnvironmentContext().getConfig();
         envConfig.put(FileSink.OUTPUT_DIR, RESULT_FILE_PATH);
-        ResultValidator.cleanResult(RESULT_FILE_PATH);
+        envConfig.put(SortFileSink.TASK_ID, "3");
 
         pipeline.submit((PipelineTask) pipelineTaskCxt -> {
             Configuration conf = pipelineTaskCxt.getConfig();
@@ -100,12 +102,12 @@ public class QuickTransfer {
                     pipelineTaskCxt.buildWindowStreamGraph(accountVertices,
                             transferOutEdges.union(transferInEdges), graphViewDesc);
 
-            SinkFunction<Result> sink = SinkFunctionFactory.getSinkFunction(conf);
+            SinkFunction<DoubleResult> sink = SinkFunctionFactory.getSinkFunction(conf);
             graphWindow.compute(new QuickTransferAlgorithms(1))
                     .compute(iterationParallelism)
                     .getVertices()
                     .filter(v -> v.getValue() > 0)
-                    .map(v -> new Result(v.getId(), v.getValue()))
+                    .map(v -> new DoubleResult(v.getId(), v.getValue()))
                     .sink(sink)
                     .withParallelism(conf.getInteger(ExampleConfigKeys.SINK_PARALLELISM));
         });
