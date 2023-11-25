@@ -1,8 +1,9 @@
 package cn.junbo.task1;
 
 import cn.junbo.model.DoubleResult;
-import cn.junbo.task1.algorithms.LoanSumAlgorithms;
 import cn.junbo.model.VertexType;
+import cn.junbo.task1.algorithms.LoanSumAlgorithms;
+import cn.junbo.utils.CsvFileSource;
 import cn.junbo.utils.SinkFunctionFactory;
 import cn.junbo.utils.SortFileSink;
 import com.antgroup.geaflow.api.function.io.SinkFunction;
@@ -14,7 +15,6 @@ import com.antgroup.geaflow.common.tuple.Tuple;
 import com.antgroup.geaflow.env.Environment;
 import com.antgroup.geaflow.example.config.ExampleConfigKeys;
 import com.antgroup.geaflow.example.function.FileSink;
-import com.antgroup.geaflow.example.function.FileSource;
 import com.antgroup.geaflow.example.util.EnvironmentUtil;
 import com.antgroup.geaflow.example.util.PipelineResultCollect;
 import com.antgroup.geaflow.model.graph.edge.IEdge;
@@ -66,7 +66,7 @@ public class LoanSum {
         pipeline.submit((PipelineTask) pipelineTaskCxt -> {
             Configuration conf = pipelineTaskCxt.getConfig();
             PWindowSource<IVertex<String, Tuple<VertexType, Double>>> personVertices =
-                    pipelineTaskCxt.buildSource(new FileSource<>(dataPath + "Person.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>(dataPath + "Person.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<String, Tuple<VertexType, Double>> vertex = new ValueVertex<>(
@@ -76,7 +76,7 @@ public class LoanSum {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
             PWindowSource<IVertex<String, Tuple<VertexType, Double>>> accountVertices =
-                    pipelineTaskCxt.buildSource(new FileSource<>(dataPath + "Account.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>(dataPath + "Account.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<String, Tuple<VertexType, Double>> vertex = new ValueVertex<>(
@@ -86,7 +86,7 @@ public class LoanSum {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
             PWindowSource<IVertex<String, Tuple<VertexType, Double>>> loanVertices =
-                    pipelineTaskCxt.buildSource(new FileSource<>(dataPath + "Loan.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>(dataPath + "Loan.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<String, Tuple<VertexType, Double>> vertex = new ValueVertex<>(
@@ -96,7 +96,7 @@ public class LoanSum {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<String, Integer>> loanEdges = pipelineTaskCxt.buildSource(new FileSource<>(dataPath + "LoanDepositAccount.csv",
+            PWindowSource<IEdge<String, Integer>> loanEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>(dataPath + "LoanDepositAccount.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<String, Integer> edge = new ValueEdge<>(String.valueOf(fields[0]), String.valueOf(fields[1]), 1);
@@ -104,7 +104,7 @@ public class LoanSum {
                             }), AllWindow.getInstance())
                     .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
-            PWindowSource<IEdge<String, Integer>> transferEdges = pipelineTaskCxt.buildSource(new FileSource<>(dataPath + "AccountTransferAccount.csv",
+            PWindowSource<IEdge<String, Integer>> transferEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>(dataPath + "AccountTransferAccount.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<String, Integer> edge = new ValueEdge<>(String.valueOf(fields[0]), String.valueOf(fields[1]), 1);
@@ -112,7 +112,7 @@ public class LoanSum {
                             }), AllWindow.getInstance())
                     .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
-            PWindowSource<IEdge<String, Integer>> ownEdges = pipelineTaskCxt.buildSource(new FileSource<>(dataPath + "PersonOwnAccount.csv",
+            PWindowSource<IEdge<String, Integer>> ownEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>(dataPath + "PersonOwnAccount.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<String, Integer> edge = new ValueEdge<>(String.valueOf(fields[1]), String.valueOf(fields[0]), 1);

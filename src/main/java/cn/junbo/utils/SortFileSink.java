@@ -33,7 +33,7 @@ public class SortFileSink<OUT extends Comparable<? super OUT>> extends RichFunct
     }
 
     public void open(RuntimeContext runtimeContext) {
-        String filePath = String.format("%s/result%s.csv",
+        String filePath = String.format("%sresult%s.csv",
                 runtimeContext.getConfiguration().getString(OUTPUT_DIR),
                 runtimeContext.getConfiguration().getString(TASK_ID));
         ResultValidator.cleanResult(filePath);

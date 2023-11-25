@@ -2,8 +2,8 @@ package cn.junbo.task2;
 
 import cn.junbo.model.Result;
 import cn.junbo.task2.algorithms.LoopTransferAlgorithms;
+import cn.junbo.utils.CsvFileSource;
 import cn.junbo.utils.SinkFunctionFactory;
-import cn.junbo.utils.SortFileSink;
 import com.antgroup.geaflow.api.function.io.SinkFunction;
 import com.antgroup.geaflow.api.graph.PGraphWindow;
 import com.antgroup.geaflow.api.pdata.stream.window.PWindowSource;
@@ -11,11 +11,8 @@ import com.antgroup.geaflow.api.window.impl.AllWindow;
 import com.antgroup.geaflow.common.config.Configuration;
 import com.antgroup.geaflow.env.Environment;
 import com.antgroup.geaflow.example.config.ExampleConfigKeys;
-import com.antgroup.geaflow.example.function.FileSink;
-import com.antgroup.geaflow.example.function.FileSource;
 import com.antgroup.geaflow.example.util.EnvironmentUtil;
 import com.antgroup.geaflow.example.util.PipelineResultCollect;
-import com.antgroup.geaflow.example.util.ResultValidator;
 import com.antgroup.geaflow.model.graph.edge.IEdge;
 import com.antgroup.geaflow.model.graph.edge.impl.ValueEdge;
 import com.antgroup.geaflow.model.graph.vertex.IVertex;
@@ -37,8 +34,6 @@ public class LoopTransfer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoopTransfer.class);
 
-    public static final String RESULT_FILE_PATH = "./target/tmp/data/result/";
-
     public static void main(String[] args) {
         Environment environment = EnvironmentUtil.loadEnvironment(args);
         IPipelineResult result = LoopTransfer.submit(environment);
@@ -48,15 +43,11 @@ public class LoopTransfer {
 
     public static IPipelineResult submit(Environment environment) {
         Pipeline pipeline = PipelineFactory.buildPipeline(environment);
-        Configuration envConfig = environment.getEnvironmentContext().getConfig();
-        envConfig.put(FileSink.OUTPUT_DIR, RESULT_FILE_PATH);
-        envConfig.put(SortFileSink.TASK_ID, "2");
-
         pipeline.submit((PipelineTask) pipelineTaskCxt -> {
             Configuration conf = pipelineTaskCxt.getConfig();
 
             PWindowSource<IVertex<BigInteger, Long>> accountVertices =
-                    pipelineTaskCxt.buildSource(new FileSource<>("finBench/Account.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/Account.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<BigInteger, Long> vertex = new ValueVertex<>(
@@ -66,7 +57,7 @@ public class LoopTransfer {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, Integer>> transferEdges = pipelineTaskCxt.buildSource(new FileSource<>("finBench/AccountTransferAccount.csv",
+            PWindowSource<IEdge<BigInteger, Integer>> transferEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/AccountTransferAccount.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, Integer> edge = new ValueEdge<>(new BigInteger(fields[0]), new BigInteger(fields[1]), 1);

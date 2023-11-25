@@ -2,10 +2,9 @@ package cn.junbo.task4;
 
 import cn.junbo.model.DoubleResult;
 import cn.junbo.model.EdgeType;
-import cn.junbo.model.Result;
 import cn.junbo.model.VertexType;
+import cn.junbo.utils.CsvFileSource;
 import cn.junbo.utils.SinkFunctionFactory;
-import cn.junbo.utils.SortFileSink;
 import com.antgroup.geaflow.api.function.io.SinkFunction;
 import com.antgroup.geaflow.api.graph.PGraphWindow;
 import com.antgroup.geaflow.api.graph.compute.VertexCentricCompute;
@@ -15,15 +14,11 @@ import com.antgroup.geaflow.api.pdata.stream.window.PWindowSource;
 import com.antgroup.geaflow.api.window.impl.AllWindow;
 import com.antgroup.geaflow.common.config.Configuration;
 import com.antgroup.geaflow.common.tuple.Triple;
-import com.antgroup.geaflow.common.tuple.Tuple;
 import com.antgroup.geaflow.env.Environment;
 import com.antgroup.geaflow.example.config.ExampleConfigKeys;
 import com.antgroup.geaflow.example.function.AbstractVcFunc;
-import com.antgroup.geaflow.example.function.FileSink;
-import com.antgroup.geaflow.example.function.FileSource;
 import com.antgroup.geaflow.example.util.EnvironmentUtil;
 import com.antgroup.geaflow.example.util.PipelineResultCollect;
-import com.antgroup.geaflow.example.util.ResultValidator;
 import com.antgroup.geaflow.model.graph.edge.IEdge;
 import com.antgroup.geaflow.model.graph.edge.impl.ValueEdge;
 import com.antgroup.geaflow.model.graph.vertex.IVertex;
@@ -41,8 +36,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class GuartaanteeSum {
 
@@ -59,15 +52,10 @@ public class GuartaanteeSum {
 
     public static IPipelineResult submit(Environment environment) {
         Pipeline pipeline = PipelineFactory.buildPipeline(environment);
-        Configuration envConfig = environment.getEnvironmentContext().getConfig();
-        envConfig.put(SortFileSink.OUTPUT_DIR, RESULT_FILE_PATH);
-        envConfig.put(SortFileSink.TASK_ID, "4");
-
         pipeline.submit((PipelineTask) pipelineTaskCxt -> {
             Configuration conf = pipelineTaskCxt.getConfig();
-
             PWindowSource<IVertex<BigInteger, Triple<VertexType, Double, Double>>> personVertices =
-                    pipelineTaskCxt.buildSource(new FileSource<>("finBench/Person.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/Person.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<BigInteger, Triple<VertexType, Double, Double>> vertex = new ValueVertex<>(
@@ -77,7 +65,7 @@ public class GuartaanteeSum {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
             PWindowSource<IVertex<BigInteger, Triple<VertexType, Double, Double>>> loanVertices =
-                    pipelineTaskCxt.buildSource(new FileSource<>("finBench/Loan.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/Loan.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<BigInteger, Triple<VertexType, Double, Double>> vertex = new ValueVertex<>(
@@ -87,7 +75,7 @@ public class GuartaanteeSum {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, EdgeType>> loanToPersonEdges = pipelineTaskCxt.buildSource(new FileSource<>("finBench/PersonApplyLoan.csv",
+            PWindowSource<IEdge<BigInteger, EdgeType>> loanToPersonEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/PersonApplyLoan.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, EdgeType> edge = new ValueEdge<>(new BigInteger(fields[1]), new BigInteger(fields[0]), EdgeType.APPLY_LOAN);
@@ -96,7 +84,7 @@ public class GuartaanteeSum {
                     .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, EdgeType>> guaranteeInEdges = pipelineTaskCxt.buildSource(new FileSource<>("finBench/PersonGuaranteePerson.csv",
+            PWindowSource<IEdge<BigInteger, EdgeType>> guaranteeInEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/PersonGuaranteePerson.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, EdgeType> edge = new ValueEdge<>(new BigInteger(fields[1]), new BigInteger(fields[0]), EdgeType.GUARANTEE);
