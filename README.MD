@@ -22,5 +22,8 @@
 Vertex：[Person.csv](data%2FfinBench%2FPerson.csv)，[Account.csv](data%2FfinBench%2FAccount.csv)，[Loan.csv](data%2FfinBench%2FLoan.csv)  
 Edge：[PersonOwnAccount.csv](data%2FfinBench%2FPersonOwnAccount.csv)，[LoanDepositAccount.csv](data%2FfinBench%2FLoanDepositAccount.csv)，[AccountTransferAccount.csv](data%2FfinBench%2FAccountTransferAccount.csv)
 
+打包命令
+mvn package assembly:single
+
 压缩命令
 zip your.zip your.jar run.sh

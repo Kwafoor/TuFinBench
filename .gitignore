@@ -64,3 +64,4 @@ reports/
 target/
 bulid/*.jar
 bulid/*.csv
+bulid/*.zip
