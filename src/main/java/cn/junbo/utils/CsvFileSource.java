@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 
 public class CsvFileSource<OUT> extends FileSource<OUT> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvFileSource.class);
+    public static final String SOURCE_DIR = "source.dir";
+
 
     public CsvFileSource(String filePath, FileLineParser<OUT> parser) {
         super(filePath, parser);
@@ -27,7 +29,7 @@ public class CsvFileSource<OUT> extends FileSource<OUT> {
             List<OUT> allRecords = this.records;
             this.records = new ArrayList();
 
-            for(int i = 0; i < allRecords.size(); ++i) {
+            for (int i = 0; i < allRecords.size(); ++i) {
                 if (i % parallel == index) {
                     this.records.add(allRecords.get(i));
                 }
@@ -37,8 +39,9 @@ public class CsvFileSource<OUT> extends FileSource<OUT> {
     }
 
     private List<OUT> readFileLines(String filePath) {
-        Path file = Paths.get(filePath);
-        try(Stream<String> lines = Files.lines(file)) {
+        String dataPath = runtimeContext.getConfiguration().getString(SOURCE_DIR);
+        Path file = Paths.get(dataPath + filePath);
+        try (Stream<String> lines = Files.lines(file)) {
             List<OUT> result = new ArrayList<>();
             boolean[] isFirstLine = {true}; // 使用数组以便在 lambda 表达式中修改此变量
             lines.forEach(line -> {
@@ -59,7 +62,6 @@ public class CsvFileSource<OUT> extends FileSource<OUT> {
             throw new RuntimeException("error in read resource file: " + filePath, ex);
         }
     }
-
 
 
 }

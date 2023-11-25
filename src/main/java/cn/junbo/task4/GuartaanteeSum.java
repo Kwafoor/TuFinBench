@@ -39,10 +39,6 @@ import java.util.Iterator;
 
 public class GuartaanteeSum {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GuartaanteeSum.class);
-
-    public static final String RESULT_FILE_PATH = "./target/tmp/data/result/";
-
     public static void main(String[] args) {
         Environment environment = EnvironmentUtil.loadEnvironment(args);
         IPipelineResult result = GuartaanteeSum.submit(environment);
@@ -55,7 +51,7 @@ public class GuartaanteeSum {
         pipeline.submit((PipelineTask) pipelineTaskCxt -> {
             Configuration conf = pipelineTaskCxt.getConfig();
             PWindowSource<IVertex<BigInteger, Triple<VertexType, Double, Double>>> personVertices =
-                    pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/Person.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>("Person.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<BigInteger, Triple<VertexType, Double, Double>> vertex = new ValueVertex<>(
@@ -65,7 +61,7 @@ public class GuartaanteeSum {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
             PWindowSource<IVertex<BigInteger, Triple<VertexType, Double, Double>>> loanVertices =
-                    pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/Loan.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>("Loan.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<BigInteger, Triple<VertexType, Double, Double>> vertex = new ValueVertex<>(
@@ -75,7 +71,7 @@ public class GuartaanteeSum {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, EdgeType>> loanToPersonEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/PersonApplyLoan.csv",
+            PWindowSource<IEdge<BigInteger, EdgeType>> loanToPersonEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("PersonApplyLoan.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, EdgeType> edge = new ValueEdge<>(new BigInteger(fields[1]), new BigInteger(fields[0]), EdgeType.APPLY_LOAN);
@@ -84,7 +80,7 @@ public class GuartaanteeSum {
                     .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, EdgeType>> guaranteeInEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/PersonGuaranteePerson.csv",
+            PWindowSource<IEdge<BigInteger, EdgeType>> guaranteeInEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("PersonGuaranteePerson.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, EdgeType> edge = new ValueEdge<>(new BigInteger(fields[1]), new BigInteger(fields[0]), EdgeType.GUARANTEE);

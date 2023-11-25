@@ -3,7 +3,6 @@ package cn.junbo.task3;
 import cn.junbo.model.DoubleResult;
 import cn.junbo.utils.CsvFileSource;
 import cn.junbo.utils.SinkFunctionFactory;
-import cn.junbo.utils.SortFileSink;
 import com.antgroup.geaflow.api.function.io.SinkFunction;
 import com.antgroup.geaflow.api.graph.PGraphWindow;
 import com.antgroup.geaflow.api.graph.compute.VertexCentricCompute;
@@ -15,7 +14,6 @@ import com.antgroup.geaflow.common.config.Configuration;
 import com.antgroup.geaflow.env.Environment;
 import com.antgroup.geaflow.example.config.ExampleConfigKeys;
 import com.antgroup.geaflow.example.function.AbstractVcFunc;
-import com.antgroup.geaflow.example.function.FileSink;
 import com.antgroup.geaflow.example.util.EnvironmentUtil;
 import com.antgroup.geaflow.example.util.PipelineResultCollect;
 import com.antgroup.geaflow.model.graph.edge.EdgeDirection;
@@ -30,8 +28,6 @@ import com.antgroup.geaflow.pipeline.task.PipelineTask;
 import com.antgroup.geaflow.view.GraphViewBuilder;
 import com.antgroup.geaflow.view.IViewDesc;
 import com.antgroup.geaflow.view.graph.GraphViewDesc;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.Collections;
@@ -40,10 +36,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class QuickTransfer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(QuickTransfer.class);
-
-    public static final String RESULT_FILE_PATH = "./target/tmp/data/result/";
 
     public static void main(String[] args) {
         Environment environment = EnvironmentUtil.loadEnvironment(args);
@@ -56,9 +48,8 @@ public class QuickTransfer {
         Pipeline pipeline = PipelineFactory.buildPipeline(environment);
         pipeline.submit((PipelineTask) pipelineTaskCxt -> {
             Configuration conf = pipelineTaskCxt.getConfig();
-
             PWindowSource<IVertex<BigInteger, Double>> accountVertices =
-                    pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/Account.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>("Account.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<BigInteger, Double> vertex = new ValueVertex<>(
@@ -68,7 +59,7 @@ public class QuickTransfer {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, Double>> transferOutEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/AccountTransferAccount.csv",
+            PWindowSource<IEdge<BigInteger, Double>> transferOutEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("AccountTransferAccount.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, Double> edge = new ValueEdge<>(new BigInteger(fields[0]), new BigInteger(fields[1]), Double.valueOf(fields[2]));
@@ -77,7 +68,7 @@ public class QuickTransfer {
                     .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, Double>> transferInEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/AccountTransferAccount.csv",
+            PWindowSource<IEdge<BigInteger, Double>> transferInEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("AccountTransferAccount.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, Double> edge = new ValueEdge<>(new BigInteger(fields[1]), new BigInteger(fields[0]), Double.valueOf(fields[2]), EdgeDirection.IN);

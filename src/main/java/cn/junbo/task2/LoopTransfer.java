@@ -47,7 +47,7 @@ public class LoopTransfer {
             Configuration conf = pipelineTaskCxt.getConfig();
 
             PWindowSource<IVertex<BigInteger, Long>> accountVertices =
-                    pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/Account.csv",
+                    pipelineTaskCxt.buildSource(new CsvFileSource<>("Account.csv",
                                     line -> {
                                         String[] fields = line.split("\\|");
                                         IVertex<BigInteger, Long> vertex = new ValueVertex<>(
@@ -57,7 +57,7 @@ public class LoopTransfer {
                             .withParallelism(conf.getInteger(ExampleConfigKeys.SOURCE_PARALLELISM));
 
 
-            PWindowSource<IEdge<BigInteger, Integer>> transferEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("finBench/AccountTransferAccount.csv",
+            PWindowSource<IEdge<BigInteger, Integer>> transferEdges = pipelineTaskCxt.buildSource(new CsvFileSource<>("AccountTransferAccount.csv",
                             line -> {
                                 String[] fields = line.split("\\|");
                                 IEdge<BigInteger, Integer> edge = new ValueEdge<>(new BigInteger(fields[0]), new BigInteger(fields[1]), 1);
