@@ -62,3 +62,5 @@ src/main/resources/finBench
 .mypy_cache/
 reports/
 target/
+bulid/*.jar
+bulid/*.csv
